@@ -23,18 +23,13 @@ for(p in 1:length(samples) ){
 # n <- 10
   m<-samples[p]
   n<-samples[p]
-<<<<<<< HEAD
 
 
-#simpleStat(c(X,Y),1,c(m,n))
-
-=======
 source('statsBR.R')
 source('mmdStats.R')
 
 #simpleStat(c(X,Y),1,c(m,n))
 
->>>>>>> myMacBranch
 R<-999
 
 #simpleStat(c(X,Y),1,c(m,n))
