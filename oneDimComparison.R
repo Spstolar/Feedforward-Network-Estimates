@@ -17,13 +17,14 @@ for(p in 1:length(samples) ){
 # n <- 10
   m<-samples[p]
   n<-samples[p]
-
+source('statsBR.R')
+source('mmdStats.R')
 
 R<-999
 
 #perform this many iterations per delta increment. Used to compute percent pass/fail
 #Example: thismany<-100, say 50 correctly identify different distributions, then 50/100 = 50 percent pass
-thismany<-20
+thismany<-3
 
 #amount to increment for tests. Ex.: delta =.1 then test means 0,0.1,0.2,...
 delta<-.1
@@ -92,12 +93,15 @@ for(i in 1:length(steps_mu)){
     #data<-permTestBR(A,B,R,stat=kernelStat)
     #mu_p_data_mmd[j]<-mean(data>=data[1])
     
+    #Print results from uMMDDecision
+    mu_p_data_mmd[j] <- uMMDDecision(A,B,m,R)
+    
   }
   percent_mu_ks[i]<-(sum(mu_p_data_ks<=alpha))/(thismany)*100
   percent_mu_simp[i]<-(sum(mu_p_data_simp<=alpha))/(thismany)*100
   percent_mu_nn[i]<-(sum(mu_p_data_nn<=alpha))/(thismany)*100
   percent_mu_edist[i]<-(sum(mu_p_data_edist<=alpha))/(thismany)*100
- #percent_mu_mmd[i]<-(sum(mu_p_data_mmd<=alpha))/(thismany)*100
+  percent_mu_mmd[i]<-(sum(mu_p_data_mmd<=alpha))/(thismany)*100
   
   
 }
@@ -105,14 +109,15 @@ for(i in 1:length(steps_mu)){
 
 #example of what ouput will look like
 df<-data.frame(steps_mu,percent_mu_ks,percent_mu_simp,percent_mu_nn, percent_mu_mmd)
- ggplot(data=df,aes(steps_mu,y=value,color=variable)) + 
+g <- ggplot(data=df,aes(steps_mu,y=value,color=variable)) + 
    geom_line(aes(y = percent_mu_ks, col = "percent_mu_ks")) + 
    geom_line(aes(y = percent_mu_simp, col = "percent_mu_simp")) +
    geom_line(aes(y = percent_mu_nn, col = "percent_mu_nn")) +
    geom_line(aes( y = percent_mu_edist,col = "percent_mu_edist")) +
-   #geom_line(aes( y = percent_mu_mmd,col = "percent_mu_mmd")) +
+   geom_line(aes( y = percent_mu_mmd,col = "percent_mu_mmd")) +
    ggtitle("50 variables")
 
+print(g)
 # Stop the clock
 proc.time() - ptm
 
