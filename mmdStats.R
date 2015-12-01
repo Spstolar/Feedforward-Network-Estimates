@@ -9,7 +9,7 @@
 
 #    Unbiased Linear Time Estimator:
 # lMMD(X,Y,m) will give you the statistic
-# lMMDDecision  Not a very fast method (just coded in the stuff for other statistics) 
+# lMMDDecision(X,Y,R)  Not a very fast method (just coded in the stuff for other statistics) 
 
 ##Modified for one dim, need to make small changes (marked ###)for multivar
 
@@ -100,32 +100,33 @@ hk <- function(a,b,c,d){
   result <- rbfk(a,c) + rbfk(b,d) - rbfk(a,d) - rbfk(b,c)
 }
 
-lMMD <- function(X,Y,m){
+lMMD <- function(X,Y){
+  m <- length(X)
   m2 <- floor(m/2)
-  Z <- rbind(X,Y)   #since X and Y are rows of data, we use row bind
+  Z <- c(X,Y)   #since X and Y are rows of data, we use row bind ###one dim alt.
   stat <- 0
   for(i in 1:m2){
-    stat <- stat + hk(Z[2*i-1,],Z[2*(2*i-1),],Z[2*i,],Z[4*i,])
+    stat <- stat + hk(Z[2*i-1],Z[2*(2*i-1)],Z[2*i],Z[4*i])  ###one dim. alt. commas on each Z
   }
   
-  stat <- stat/m2
-  print(stat)
+  statistic <- stat/m2
+  #return(as.data.frame(statistic))
 }
 
-lMMDDecision <- function(X,Y,m,R){
+lMMDDecision <- function(X,Y,R){
+  m <- length(X)
   
-  
-  Z <- rbind(X,Y)   #combine the data
+  Z <- rbind(as.matrix(X),as.matrix(Y))   #combine the data
   S <- numeric(R)   #values of statistic for different perms
   options(warn = 1)
-  SO <- lMMD(X,Y,m)  #statistic on original
+  SO <- lMMD(X,Y)  #statistic on original
   
   for (i in 1:R) {
     #indices sample
     k <- sample(2*m,2*m)
     x1 <- Z[k,]
     y1 <- Z[-k,]
-    S[i] <- lMMD(x1,y1,m)
+    S[i] <- lMMD(x1,y1)
   }
   
   p <- 1
@@ -136,14 +137,15 @@ lMMDDecision <- function(X,Y,m,R){
   #p <- mean(c(SO,S) >= SO)
   options(warn = 0)
   
-  print(p)
-  
-  if(p < .05){
-    print("Rejected")
-  }
-  if(p > .95){
-    print("Rejected")
-  }
+#   print(p)
+#   
+#   if(p < .05){
+#     print("Rejected")
+#   }
+#   if(p > .95){
+#     print("Rejected")
+#   }
+  result <- p
 }
 
 # #Testing

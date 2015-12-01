@@ -62,6 +62,7 @@ mu_p_data_simp<-numeric(thismany)
 mu_p_data_nn<-numeric(thismany)
 mu_p_data_edist<-numeric(thismany)
 mu_p_data_mmd<-numeric(thismany)
+mu_p_data_lmmd<-numeric(thismany)
 
 #percent that registered correct when means was varied
 percent_mu_ks<-numeric(length(steps_mu))
@@ -69,6 +70,8 @@ percent_mu_simp<-numeric(length(steps_mu))
 percent_mu_nn<-numeric(length(steps_mu))
 percent_mu_edist<-numeric(length(steps_mu))
 percent_mu_mmd<-numeric(length(steps_mu))
+percent_mu_lmmd<-numeric(length(steps_mu))
+
 
 #Std normal - this distribution does not change, it is the base case
 A<-rnorm(n,min_mu,min_var)
@@ -102,10 +105,11 @@ for(i in 1:length(steps_mu)){
     data<-permTestBR(A,B,R,stat=edist)
     mu_p_data_edist[j]<-mean(data>=data[1])
     
-    #Get data for MMD Radial stat
-    #data<-permTestBR(A,B,R,stat=kernelStat)
-    #mu_p_data_mmd[j]<-mean(data>=data[1])
-    
+    #Get data for linear MMD stat
+    #data<-permTestBR(A,B,R,stat= lMMD)
+    #mu_p_data_lmmd[j]<-mean(data>=data[1])
+    #print results from lMMDDecision
+    mu_p_data_lmmd[j] <- lMMDDecision(A,B,R)
    
     #Print results from uMMDDecision
     mu_p_data_mmd[j] <- uMMDDecision(A,B,m,R)
@@ -116,6 +120,8 @@ for(i in 1:length(steps_mu)){
   percent_mu_nn[i]<-(sum(mu_p_data_nn<=alpha))/(thismany)*100
   percent_mu_edist[i]<-(sum(mu_p_data_edist<=alpha))/(thismany)*100
   percent_mu_mmd[i]<-(sum(mu_p_data_mmd<=alpha))/(thismany)*100
+  percent_mu_lmmd[i]<-(sum(mu_p_data_lmmd<=alpha))/(thismany)*100
+  
   
   
 }
@@ -130,6 +136,7 @@ g <- ggplot(data=df,aes(steps_mu,y=value,color=variable)) +
    geom_line(aes(y = percent_mu_nn, col = "percent_mu_nn")) +
    geom_line(aes( y = percent_mu_edist,col = "percent_mu_edist")) +
    geom_line(aes( y = percent_mu_mmd,col = "percent_mu_mmd")) +
+   geom_line(aes( y = percent_mu_lmmd,col = "percent_mu_lmmd")) +
    ggtitle("50 variables")
 
 print(g)

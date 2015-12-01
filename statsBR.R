@@ -69,7 +69,7 @@ nNeighbor <- function(x,y,k=3) {
 }
 
 ################################################################################
-#Function: rbkf
+#Function: OLD rbkf
 #  
 #Description: Computes the MMD statistic using the radal bias kernal function
 #                
@@ -80,47 +80,47 @@ nNeighbor <- function(x,y,k=3) {
 ################################################################################
 
 #compute a matrix of RBF kernels
-rbfk <- function(x,y,sigma=1,m,n){
-
-  x<-as.matrix(x)
-  y<-as.matrix(y)
-  #the array of inner products on the x vectors
-  xInner = apply(x, 1, function(x) x %*% x);
-  
-  #repeat the array to get an mxn matrix whose columns are xInner
-  xInnerM = replicate(n,xInner);
-  
-  #the matrix of inner products on the y vectors
-  yInner = apply(y, 1, function(y) y %*% y);
-  
-  #repeat the array to get an mxn matrix whose rows are yInner
-  yInnerM = t(replicate(m,yInner));
-  
-  #get the mxn matrix whose (i,j) entry is <x_i, y_j>
-  #there's got to be a better way this but...
-  
-  xyInnerM = matrix(data=0, nrow=m, ncol=n);
-  for(column in 1:n){
-    xyInnerM[,column] <- x%*%y[column,]
-  }
-  
-  H = xInnerM + yInnerM - 2*xyInnerM;
-  #This gives us the mxn matrix whose (i,j) entry is k(x_i,y_j)
-  H = exp(-H/(2*sigma));
-}
-
-#rbfk(A,B,sigma, m,n)
-kernelStat <- function(x,y,sigma=1){
-  
-  m<-NROW(x)
-  n<-NROW(y)
-  K = rbfk(x,x,sigma,m,m);
-  L = rbfk(y,y,sigma,n,n);
-  KL = rbfk(x,y,sigma,m,n);
-  
-  statistic = sum(K/(m*(m-1)) + L/(n*(n-1)) - KL/(m*n) - t(KL)/(m*n));
-  return(as.data.frame(statistic))
-}
+# rbfk <- function(x,y,sigma=1,m,n){
+# 
+#   x<-as.matrix(x)
+#   y<-as.matrix(y)
+#   #the array of inner products on the x vectors
+#   xInner = apply(x, 1, function(x) x %*% x);
+#   
+#   #repeat the array to get an mxn matrix whose columns are xInner
+#   xInnerM = replicate(n,xInner);
+#   
+#   #the matrix of inner products on the y vectors
+#   yInner = apply(y, 1, function(y) y %*% y);
+#   
+#   #repeat the array to get an mxn matrix whose rows are yInner
+#   yInnerM = t(replicate(m,yInner));
+#   
+#   #get the mxn matrix whose (i,j) entry is <x_i, y_j>
+#   #there's got to be a better way this but...
+#   
+#   xyInnerM = matrix(data=0, nrow=m, ncol=n);
+#   for(column in 1:n){
+#     xyInnerM[,column] <- x%*%y[column,]
+#   }
+#   
+#   H = xInnerM + yInnerM - 2*xyInnerM;
+#   #This gives us the mxn matrix whose (i,j) entry is k(x_i,y_j)
+#   H = exp(-H/(2*sigma));
+# }
+# 
+# #rbfk(A,B,sigma, m,n)
+# kernelStat <- function(x,y,sigma=1){
+#   
+#   m<-NROW(x)
+#   n<-NROW(y)
+#   K = rbfk(x,x,sigma,m,m);
+#   L = rbfk(y,y,sigma,n,n);
+#   KL = rbfk(x,y,sigma,m,n);
+#   
+#   statistic = sum(K/(m*(m-1)) + L/(n*(n-1)) - KL/(m*n) - t(KL)/(m*n));
+#   return(as.data.frame(statistic))
+# }
 
 
 ################################################################################
