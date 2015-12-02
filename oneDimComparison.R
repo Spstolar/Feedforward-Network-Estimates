@@ -10,17 +10,17 @@ source('permTestBR.R')
 #of B by an amount "delta" from a minimum value of min_mu to a maximum value of max_mu.  For each increment of 
 #the mean (or variance), "R" permutation tests are run and a p-value calculated and stored in mu_p_data_statistic. 
 #Once the mean (or variance) has been incremented through all values by amount delta, the percent that correctly
-#identifed pass/fail are stroed in percent_mu_stat.
+#identifed pass/fail are stored in percent_mu_stat.
 #################################################################################################################
 
 
 #################################################################################################################
 #                               !!!   Parameter set up for tests    !!!
-#samples<-c(5,10,15,20,30,40,70,100)
+#samples<-c(5,10,15,20,30,40,70,100)  #if you want to vary the amount of samples to compare performance
 samples<-50
-for(p in 1:length(samples) ){
-# m <- 10 
-# n <- 10
+for(p in 1:length(samples) ){   #First a wrapping for-loop to compare sample size performance, when the length is
+# m <- 10                       #more than 1 you'll want to make different data frames for the final storage
+# n <- 10                       #for each iteration and kill the plotting
   m<-samples[p]
   n<-samples[p]
 
@@ -28,18 +28,17 @@ for(p in 1:length(samples) ){
 source('statsBR.R')
 source('mmdStats.R')
 
-#simpleStat(c(X,Y),1,c(m,n))
 
-R<-999
-
-#simpleStat(c(X,Y),1,c(m,n))
-
-#perform this many iterations per delta increment. Used to compute percent pass/fail
-#Example: thismany<-100, say 50 correctly identify different distributions, then 50/100 = 50 percent pass
-thismany<-20
+R<-999    #number of permutations to run
 
 
-#amount to increment for tests. Ex.: delta =.1 then test means 0,0.1,0.2,...
+#perform this many tests per delta increment. Used to compute percent pass/fail
+#Each test regenerates the samples and has you accept/reject the null hypothesis.
+#Example: thisManyTests<-100, say 50 correctly identify different distributions, then 50/100 = 50 percent pass
+thisManyTests<-20
+
+
+#amount to increment the mean of B for tests. Ex.: delta =.1 then test means 0,0.1,0.2,...
 delta<-.1
 min_mu<-0
 max_mu<-2
@@ -51,18 +50,18 @@ alpha<-.05
 #################################################################################################################
 
 #sequence of means from min_mu to max_mu incremented by value given by delta
-steps_mu<-seq(min_mu,max_mu,delta)
+steps_mu <- seq(min_mu,max_mu,delta)
 
 #same as above, but for variance
-steps_var<-is.integer((max_var-min_var)/delta)
+#steps_var <- is.integer((max_var-min_var)/delta)  #keeping variance constant here
 
-#p-value each iteration for various statistics when mean was varied
-mu_p_data_ks<-numeric(thismany)
-mu_p_data_simp<-numeric(thismany)
-mu_p_data_nn<-numeric(thismany)
-mu_p_data_edist<-numeric(thismany)
-mu_p_data_mmd<-numeric(thismany)
-mu_p_data_lmmd<-numeric(thismany)
+#p-value at each iteration for various statistics when mean was varied
+mu_p_data_ks   <- numeric(thisManyTests)
+mu_p_data_simp <-numeric(thisManyTests)
+mu_p_data_nn   <-numeric(thisManyTests)
+mu_p_data_edist<-numeric(thisManyTests)
+mu_p_data_mmd  <-numeric(thisManyTests)
+mu_p_data_lmmd <-numeric(thisManyTests)
 
 #percent that registered correct when means was varied
 percent_mu_ks<-numeric(length(steps_mu))
@@ -74,7 +73,7 @@ percent_mu_lmmd<-numeric(length(steps_mu))
 
 
 #Std normal - this distribution does not change, it is the base case
-A<-rnorm(n,min_mu,min_var)
+A<-rnorm(n, mean = min_mu, sd = min_var)
 
 # Start the clock!
 ptm <- proc.time()
@@ -82,16 +81,18 @@ ptm <- proc.time()
 print(length(steps_mu))
 for(i in 1:length(steps_mu)){
   
-   print(i,steps_mu)
+   print(i,steps_mu)  #will tell us far along we are in moving the mean of the second distribution
   
   #The B distribution changes
   
-  for(j in 1:thismany){
-    B<-rnorm(m,steps_mu[i],min_var)
+  for(j in 1:thisManyTests){
+    
+    #define the second sample
+    B <- rnorm(m, mean = steps_mu[i], sd = min_var)
     
     #Get data for ks stat
-    data<-permTestBR(A,B,R,stat=ks.test,exact=FALSE)
-    mu_p_data_ks[j]<-mean(data>=data[1])
+    data <- permTestBR(A,B,R,stat=ks.test,exact=FALSE)
+    mu_p_data_ks[j] <- mean(data>=data[1])
     
     #Get data for simple stat
     data<-permTestBR(A,B,R,stat=simpleStat)
@@ -105,27 +106,26 @@ for(i in 1:length(steps_mu)){
     data<-permTestBR(A,B,R,stat=edist)
     mu_p_data_edist[j]<-mean(data>=data[1])
     
-    #Get data for linear MMD stat
-    #data<-permTestBR(A,B,R,stat= lMMD)
-    #mu_p_data_lmmd[j]<-mean(data>=data[1])
-    #print results from lMMDDecision
+    #Permutation test on linear MMD statistic done in MMD code
     mu_p_data_lmmd[j] <- lMMDDecision(A,B,R)
    
-    #Print results from uMMDDecision
+    #Permutation test on quadratic MMD statistic done in MMD code
     mu_p_data_mmd[j] <- uMMDDecision(A,B,m,R)
 
   }
-  percent_mu_ks[i]<-(sum(mu_p_data_ks<=alpha))/(thismany)*100
-  percent_mu_simp[i]<-(sum(mu_p_data_simp<=alpha))/(thismany)*100
-  percent_mu_nn[i]<-(sum(mu_p_data_nn<=alpha))/(thismany)*100
-  percent_mu_edist[i]<-(sum(mu_p_data_edist<=alpha))/(thismany)*100
-  percent_mu_mmd[i]<-(sum(mu_p_data_mmd<=alpha))/(thismany)*100
-  percent_mu_lmmd[i]<-(sum(mu_p_data_lmmd<=alpha))/(thismany)*100
+  
+  #Now that we've tested the methods on different samples, check how well they distinguish different distributions
+  percent_mu_ks[i]<-(sum(mu_p_data_ks<=alpha))/(thisManyTests)*100
+  percent_mu_simp[i]<-(sum(mu_p_data_simp<=alpha))/(thisManyTests)*100
+  percent_mu_nn[i]<-(sum(mu_p_data_nn<=alpha))/(thisManyTests)*100
+  percent_mu_edist[i]<-(sum(mu_p_data_edist<=alpha))/(thisManyTests)*100
+  percent_mu_mmd[i]<-(sum(mu_p_data_mmd<=alpha))/(thisManyTests)*100
+  percent_mu_lmmd[i]<-(sum(mu_p_data_lmmd<=alpha))/(thisManyTests)*100
   
   
   
 }
-#percent_mu_ks
+
 
 #example of what ouput will look like
 df<-data.frame(steps_mu,percent_mu_ks,percent_mu_simp,percent_mu_nn, percent_mu_mmd)
@@ -137,7 +137,8 @@ g <- ggplot(data=df,aes(steps_mu,y=value,color=variable)) +
    geom_line(aes( y = percent_mu_edist,col = "percent_mu_edist")) +
    geom_line(aes( y = percent_mu_mmd,col = "percent_mu_mmd")) +
    geom_line(aes( y = percent_mu_lmmd,col = "percent_mu_lmmd")) +
-   ggtitle("50 variables")
+   ggtitle("50 Samples From Each Distribution") +
+   labs(x="Distance Between Means",y="Percentage of Correct Rejections")
 
 print(g)
 # Stop the clock

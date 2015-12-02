@@ -1,0 +1,2 @@
+\beamer@endinputifotherversion {3.36pt}
+\beamer@sectionintoc {1}{Gretton et. al. RKHS method}{7}{0}{1}

@@ -10,7 +10,7 @@ n <- 100
 
 different <- 1
 mu1 <- c(2,2,2)
-mu2 <- c(2,1,2)
+mu2 <- c(2,1.5,2)
 
 if(different == 0){
   mu1 <- c(2,2)
@@ -23,7 +23,7 @@ A <- mvrnorm(m,mu1,Sigma)
 B <- mvrnorm(n,mu2,Sigma)
 
 #choose the statistic
-permStat <- function(x,y){
+kernelStat <- function(x,y){
   kolSmirStat(x,y)
 }
 #Kolmogorov-Smirnov test is just a permutation with the statistic that 

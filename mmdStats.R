@@ -1,4 +1,4 @@
-# This contains the tests for the maximum mean discrepancy test
+# This contains the tests for the Maximum Mean Discrepancy (MMD) test
 
 # input: the two samples X and Y along with m the number of points in each sample (assumed to be equal)
 
@@ -116,14 +116,14 @@ lMMD <- function(X,Y){
 lMMDDecision <- function(X,Y,R){
   m <- length(X)
   
-  Z <- rbind(as.matrix(X),as.matrix(Y))   #combine the data
+  Z <- rbind(as.matrix(X),as.matrix(Y))   #combine the samples into one vector
   S <- numeric(R)   #values of statistic for different perms
   options(warn = 1)
   SO <- lMMD(X,Y)  #statistic on original
   
   for (i in 1:R) {
     #indices sample
-    k <- sample(2*m,2*m)
+    k <- sample(2*m,m)
     x1 <- Z[k,]
     y1 <- Z[-k,]
     S[i] <- lMMD(x1,y1)
@@ -148,22 +148,21 @@ lMMDDecision <- function(X,Y,R){
   result <- p
 }
 
-# #Testing
-# m <- 3
-# n <- 3
-# sigma <- 1;
-# 
-# mu1 <- c(2,2)
-# mu2 <- c(-2,-2)
-# 
-# 
-# Sigma <- matrix(c(1,0,0,1),2,2) #same covariance matrix
-# A <- mvrnorm(m,mu1,Sigma)    
-# B <- mvrnorm(n,mu2,Sigma)
-# 
-# print(A)
-# print(B)
-# alright <- lMMDDecision(A,B,m,99)
+#Testing
+m <- 3
+n <- 3
+sigma <- 1;
+
+mu1 <- c(2,2)
+mu2 <- c(-2,-2)
 
 
-# alright <- lMMDDecision(A,B,m,99)
+Sigma <- matrix(c(1,0,0,1),2,2) #same covariance matrix
+A <- rnorm(m,0,1)    
+B <- rnorm(n,1,1)
+
+print(A)
+print(B)
+alright <- lMMDDecision(A,B,99)
+print(alright)
+
