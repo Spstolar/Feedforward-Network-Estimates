@@ -1,7 +1,6 @@
 #comparison of tests
 #1D
 source('permTestBoot.R')
-source('mmdStats.R')
 source('permTestBR.R')
 source('statsBR.R')
 source('mmdStats.R')

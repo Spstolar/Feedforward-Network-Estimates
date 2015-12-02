@@ -58,8 +58,8 @@ uMMDP <- function(P,m){
 
 #Now we shuffle the matrix to get bootstrap baseline for the value then decide acceptance
 
-uMMDDecision <- function(X,Y,m,R){
-  
+uMMDDecision <- function(X,Y,R){
+  m <- dim(as.matrix(X))[1]
   P <- kernelMatrix(X,Y,m)
   K <- 2*m
   
@@ -111,7 +111,7 @@ lMMD <- function(X,Y){
   
   statistic <- stat/m2
   statistic <- as.numeric(statistic)
-  #return(as.data.frame(statistic))
+  return(as.data.frame(statistic))
 }
 
 lMMDDecision <- function(X,Y,R){
@@ -137,20 +137,19 @@ lMMDDecision <- function(X,Y,R){
 }
 
 #Testing
-m <- 3
+m <- 50
 n <- 3
 Sigma <- diag(3);  #simple 3-dim indentity matrix
 
-mu1 <- c(2,2)
-mu2 <- c(-2,-2)
+mu1 <- rep(0,3)
+mu2 <- rep(1,3)
 
 
-Sigma <- matrix(c(1,0,0,1),2,2) #same covariance matrix
 A <- mvrnorm(m,mu1,Sigma)    
-B <- mvrnorm(m,mu2,Sigma)
+B <- mvrnorm(m,mu1,Sigma)
 
-print(A)
-print(B)
-alright <- lMMDDecision(A,B,999)
+# print(A)
+# print(B)
+alright <- uMMDDecision(A,B,999)
 print(alright)
 
