@@ -3,11 +3,12 @@ library(ggplot2)
 #Some initial plotting parameters for the abline
 slope=1
 int = 0
+samples = 20
 
 #################################################################################################################
 #Same Mean Same variance
-norm1<-rnorm(100,0,1)
-norm2<-rnorm(100,0,1)
+norm1<-rnorm(samples,0,1)
+norm2<-rnorm(samples,0,1)
 o<-'mu'
 x<-cbind(norm1,"mu1=0")
 y<-cbind(norm2,"mu2=0")
@@ -26,8 +27,8 @@ p2 <- ggplot(data=d2, aes(x=data ,col=as.factor(mu))) +
 #################################################################################################################
 #Different Mean Same Variance
 
-norm1<-rnorm(100,0,1)
-norm2<-rnorm(100,1,1)
+norm1<-rnorm(samples,0,1)
+norm2<-rnorm(samples,1,1)
 
 x<-cbind(norm1,"mu1=0")
 y<-cbind(norm2,"mu2=.5")
@@ -44,8 +45,8 @@ p4 <- ggplot(d2, aes(x=data ,color=factor(mu))) +
 
 #################################################################################################################
 #Diffent Mean and Different Variance
-norm1<-rnorm(100,0,1)
-norm2<-rnorm(100,0,2)
+norm1<-rnorm(samples,0,1)
+norm2<-rnorm(samples,0,2)
 
 x<-cbind(norm1,"var1=1")
 y<-cbind(norm2,"var2=2")
@@ -63,8 +64,8 @@ p6 <- ggplot(d2, aes(x=data ,color=factor(mu))) +
 #################################################################################################################
 
 #Different Distributions
-norm1<-rnorm(100,0,1)
-norm2<-rexp(100,2)
+norm1<-rnorm(samples,0,1)
+norm2<-rexp(samples,2)
 
 x<-cbind(norm1,1)
 y<-cbind(norm2,2)
