@@ -39,29 +39,51 @@
 \includegraphics[scale=.32]{lfpspike.jpg}
 \end{frame}
 
-\begin{frame}{Motivating Scenario}
-
-\begin{block}{
-From Gretton et. al.}
-In bioinformatics,  it is of interest to co
-mpare microarray
-data from identical tissue types as measured by different laboratories, to
-detect whether the data
-may be analysed jointly, or whether differences in experimental procedure have caused systematic
-differences in the data distributions.
-\end{block}
-
-\end{frame}
+%\begin{frame}{Motivating Scenario}
+%
+%\begin{block}{
+%From Gretton et. al.}
+%In bioinformatics,  it is of interest to co
+%mpare microarray
+%data from identical tissue types as measured by different laboratories, to
+%detect whether the data
+%may be analysed jointly, or whether differences in experimental procedure have caused systematic
+%differences in the data distributions.
+%\end{block}
+%
+%\end{frame}
 
 
 \begin{frame}{Basic Question}
 
 Given two distributions $p$ and $q$, how do we test whether they are different on the basis of samples drawn from each of them?
 
+\begin{center}
 $X = (X^1, ... , X^m)$ drawn from $p$
 
-$Y = (Y^1, ..., Y^n)$ drawn from $q$
+\vspace{.2 cm}
 
+$Y = (Y^1, ..., Y^n)$ drawn from $q$
+\end{center}
+
+
+\end{frame}
+
+\begin{frame}
+{Example}
+
+$X = (1.4110420, -0.6491983, -0.2034312,  ...,  0.5670504)$
+
+\vspace{.2 cm}
+$Y = ( 2.10555009,  1.59182751,  0.85874229, ...,  0.38632577)$
+
+\pause 
+
+\vspace{1cm}
+\begin{center}
+$H_0: p = q$
+
+\end{center}
 \end{frame}
 
 
@@ -72,9 +94,15 @@ Useful for lower dimensional data, but how do we visualize the difference when $
 \end{frame}
 
 
-\begin{frame}{Permuation Testing}
+\begin{frame}{Permutation Testing}
 
-See book info as well as http://stats.stackexchange.com/questions/59774/test-whether-variables-follow-the-same-distribution
+\bi 
+\item Develop a statistic given the samples.
+
+\item Permute the samples and run the statistic again.
+
+\item See where the original statistic falls on a plot of the statistic for different permutations. 
+\ei 
 
 \end{frame}
 

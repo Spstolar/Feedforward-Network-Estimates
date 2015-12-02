@@ -101,7 +101,7 @@ hk <- function(a,b,c,d){
 }
 
 lMMD <- function(X,Y){
-  m <- length(X)
+  m <- dim(as.matrix(X))[1]
   m2 <- floor(m/2)
   Z <- c(X,Y)   #since X and Y are rows of data, we use row bind ###one dim alt.
   stat <- 0
@@ -111,58 +111,45 @@ lMMD <- function(X,Y){
   
   statistic <- stat/m2
   statistic <- as.numeric(statistic)
-  return(as.data.frame(statistic))
+  #return(as.data.frame(statistic))
+  return(as.data.frame(statistic)$statistic)
 }
 
 lMMDDecision <- function(X,Y,R){
-  m <- dim(X)[1]
-  
+  m <- dim(as.matrix(X))[1]
   Z <- rbind(as.matrix(X),as.matrix(Y))   #combine the samples into one vector
   S <- numeric(R)   #values of statistic for different perms
   options(warn = 1)
   SO <- lMMD(X,Y)  #statistic on original
- 
+  #print(SO)
   
   for ( i in (1:R) ) {
     #indices sample
-    indexSample <- sample.int(6, size = m )
+    indexSample <- sample(2*m, m )
     x1 <- Z[indexSample]
-    y1 <- Z[-indexSample,]
+    y1 <- Z[-indexSample]
     S[i] <- lMMD(x1,y1)
   }
   
   p <- mean(c(SO,S) >= SO)
-#   p <- 1
-#   for( j in 1:R){
-#     p <- p + as.numeric(S[i] >= SO)
-#   }
-#   p <- p/(R+1)
-  #p <- mean(c(SO,S) >= SO)
+
   options(warn = 0)
   
-#   print(p)
-#   
-#   if(p < .05){
-#     print("Rejected")
-#   }
-#   if(p > .95){
-#     print("Rejected")
-#   }
+
   result <- p
 }
 
 # #Testing
-# m <- 3
-# n <- 3
-# sigma <- 1;
+# m <- 10
+# Sigma <- 1;
 # 
-# mu1 <- c(2,2)
-# mu2 <- c(-2,-2)
+# mu1 <- 0
+# mu2 <- 1
 # 
 # 
-# Sigma <- matrix(c(1,0,0,1),2,2) #same covariance matrix
-# A <- mvrnorm(m,mu1,Sigma)    
-# B <- mvrnorm(m,mu2,Sigma)
+# # Sigma <- matrix(c(1,0,0,1),2,2) #same covariance matrix
+# A <- rnorm(m,mean = mu1, sd = Sigma)    
+# B <- rnorm(m, mean = mu2, sd = Sigma)
 # 
 # print(A)
 # print(B)

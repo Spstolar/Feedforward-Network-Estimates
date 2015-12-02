@@ -17,7 +17,7 @@ source('permTestBR.R')
 #################################################################################################################
 #                               !!!   Parameter set up for tests    !!!
 #samples<-c(5,10,15,20,30,40,70,100)  #if you want to vary the amount of samples to compare performance
-samples<- 10
+samples<- 50
 for(p in 1:length(samples) ){   #First a wrapping for-loop to compare sample size performance, when the length is
 # m <- 10                       #more than 1 you'll want to make different data frames for the final storage
 # n <- 10                       #for each iteration and kill the plotting
@@ -35,11 +35,11 @@ R<-999    #number of permutations to run
 #perform this many tests per delta increment. Used to compute percent pass/fail
 #Each test regenerates the samples and has you accept/reject the null hypothesis.
 #Example: thisManyTests<-100, say 50 correctly identify different distributions, then 50/100 = 50 percent pass
-thisManyTests<-20
+thisManyTests <- 20
 
 
 #amount to increment the mean of B for tests. Ex.: delta =.1 then test means 0,0.1,0.2,...
-delta<- .25
+delta<- .1
 min_mu<-0
 max_mu<-2
 min_var<-1
