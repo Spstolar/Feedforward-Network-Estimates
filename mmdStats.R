@@ -112,7 +112,7 @@ lMMD <- function(X,Y){
   statistic <- stat/m2
   statistic <- as.numeric(statistic)
   #return(as.data.frame(statistic))
-  return(as.data.frame(statistic)$statistic)
+  return(as.data.frame(statistic))
 }
 
 lMMDDecision <- function(X,Y,R){
