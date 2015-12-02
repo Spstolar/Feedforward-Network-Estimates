@@ -107,7 +107,9 @@ for(i in 1:length(steps_mu)){
     mu_p_data_edist[j]<-mean(data>=data[1])
     
     #Permutation test on linear MMD statistic done in MMD code
-    mu_p_data_lmmd[j] <- lMMDDecision(A,B,R)
+    data <- permTestBR(A,B,R,stat=lMMD)
+    mu_p_data_lmmd[j] <- mean( data >= data[1])
+    #mu_p_data_lmmd[j] <- lMMDDecision(A,B,R)
    
     #Permutation test on quadratic MMD statistic done in MMD code
     mu_p_data_mmd[j] <- uMMDDecision(A,B,m,R)

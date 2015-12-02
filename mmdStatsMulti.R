@@ -11,7 +11,7 @@
 # lMMD(X,Y,m) will give you the statistic
 # lMMDDecision(X,Y,R)  Not a very fast method (just coded in the stuff for other statistics) 
 
-##Modified for one dim, need to make small changes (marked ###)for multivar
+##Modified for multi dim
 
 #compute the radial basis function kernel for two vecs
 rbfk <- function(a,b, sigma = 1){
@@ -23,19 +23,19 @@ rbfk <- function(a,b, sigma = 1){
 #given the two samples X and Y, define the matrix P of the kernel on pairs
 
 kernelMatrix <- function(X,Y,m){
-  Z <- c(X,Y) #combine the rows of X and Y data points  ###use rbind for multi
+  Z <- rbind(X,Y) #combine the rows of X and Y data points  
   P <- matrix(0,2*m,2*m)
   
   for(i in 1:(2*m)){
     for(j in 1:(2*m)){
-
-      P[i,j] <- rbfk(Z[i],Z[j])    ### add commas fors multi
+      
+      P[i,j] <- rbfk(Z[i,],Z[j,])    
     }
   }
   
   P <- P - diag(P)*diag(2*m) #make the diagonal elements 0
   result <- P
-
+  
 }
 
 
@@ -69,27 +69,27 @@ uMMDDecision <- function(X,Y,m,R){
   SO <- uMMDP(P,m)  #statistic on original
   
   for( i in 1:R){
-  k <- sample(K,2*m,replace=F)
-
-  Q <- P[,k] #permute the columns
-  Q <- Q[k,] #permute the rows in the same way to maintain symmetry
-  
-  S[i] = uMMDP(Q,m)
+    k <- sample(K,2*m,replace=F)
+    
+    Q <- P[,k] #permute the columns
+    Q <- Q[k,] #permute the rows in the same way to maintain symmetry
+    
+    S[i] = uMMDP(Q,m)
   }
-
+  
   p <- mean(c(SO,S) >= SO)
   options(warn = 0)
-
+  
   pval <- p
-#   print(p)
-#   
-#   if(p < .05){
-#     print("Rejected")
-#   }
-#   
-#   if(p > .95){
-#     print("Rejected")
-#   }
+  #   print(p)
+  #   
+  #   if(p < .05){
+  #     print("Rejected")
+  #   }
+  #   
+  #   if(p > .95){
+  #     print("Rejected")
+  #   }
 }
 
 
@@ -101,17 +101,17 @@ hk <- function(a,b,c,d){
 }
 
 lMMD <- function(X,Y){
-  m <- length(X)
+  m <- dim(X)[1]
   m2 <- floor(m/2)
-  Z <- c(X,Y)   #since X and Y are rows of data, we use row bind ###one dim alt.
+  Z <- rbind(X,Y)   #since X and Y are rows of data, we use row bind 
   stat <- 0
-  for(i in 1:m2){
-    stat <- stat + hk(Z[2*i-1],Z[2*(2*i-1)],Z[2*i],Z[4*i])  ###one dim. alt. commas on each Z
+  for(i in (1:m2)){
+    stat <- stat + hk(Z[(2*i-1),],Z[(2*(2*i-1)),],Z[2*i,],Z[4*i,]) 
   }
   
   statistic <- stat/m2
   statistic <- as.numeric(statistic)
-  return(as.data.frame(statistic))
+  #return(as.data.frame(statistic))
 }
 
 lMMDDecision <- function(X,Y,R){
@@ -121,51 +121,36 @@ lMMDDecision <- function(X,Y,R){
   S <- numeric(R)   #values of statistic for different perms
   options(warn = 1)
   SO <- lMMD(X,Y)  #statistic on original
- 
   
-  for ( i in (1:R) ) {
+  for (i in 1:R) {
     #indices sample
-    indexSample <- sample.int(6, size = m )
-    x1 <- Z[indexSample]
+    indexSample <- sample(2*m,m)
+    x1 <- Z[indexSample,]
     y1 <- Z[-indexSample,]
     S[i] <- lMMD(x1,y1)
   }
   
   p <- mean(c(SO,S) >= SO)
-#   p <- 1
-#   for( j in 1:R){
-#     p <- p + as.numeric(S[i] >= SO)
-#   }
-#   p <- p/(R+1)
-  #p <- mean(c(SO,S) >= SO)
   options(warn = 0)
   
-#   print(p)
-#   
-#   if(p < .05){
-#     print("Rejected")
-#   }
-#   if(p > .95){
-#     print("Rejected")
-#   }
   result <- p
 }
 
-# #Testing
-# m <- 3
-# n <- 3
-# sigma <- 1;
-# 
-# mu1 <- c(2,2)
-# mu2 <- c(-2,-2)
-# 
-# 
-# Sigma <- matrix(c(1,0,0,1),2,2) #same covariance matrix
-# A <- mvrnorm(m,mu1,Sigma)    
-# B <- mvrnorm(m,mu2,Sigma)
-# 
-# print(A)
-# print(B)
-# alright <- lMMDDecision(A,B,999)
-# print(alright)
+#Testing
+m <- 3
+n <- 3
+Sigma <- diag(3);  #simple 3-dim indentity matrix
+
+mu1 <- c(2,2)
+mu2 <- c(-2,-2)
+
+
+Sigma <- matrix(c(1,0,0,1),2,2) #same covariance matrix
+A <- mvrnorm(m,mu1,Sigma)    
+B <- mvrnorm(m,mu2,Sigma)
+
+print(A)
+print(B)
+alright <- lMMDDecision(A,B,999)
+print(alright)
 
