@@ -131,12 +131,12 @@ for(i in 1:length(steps_mu)){
 df<-data.frame(steps_mu,percent_mu_ks,percent_mu_simp,percent_mu_nn, percent_mu_mmd)
 
 g <- ggplot(data=df,aes(steps_mu,y=value,color=variable)) + 
-   geom_line(aes(y = percent_mu_ks, col = "percent_mu_ks")) + 
-   geom_line(aes(y = percent_mu_simp, col = "percent_mu_simp")) +
-   geom_line(aes(y = percent_mu_nn, col = "percent_mu_nn")) +
-   geom_line(aes( y = percent_mu_edist,col = "percent_mu_edist")) +
-   geom_line(aes( y = percent_mu_mmd,col = "percent_mu_mmd")) +
-   geom_line(aes( y = percent_mu_lmmd,col = "percent_mu_lmmd")) +
+   geom_line(aes(y = percent_mu_ks, col = "KS")) + 
+   geom_line(aes(y = percent_mu_simp, col = "Simple")) +
+   geom_line(aes(y = percent_mu_nn, col = "Nearest Neighbor")) +
+   geom_line(aes( y = percent_mu_edist,col = "Energy")) +
+   geom_line(aes( y = percent_mu_mmd,col = "MMD")) +
+   geom_line(aes( y = percent_mu_lmmd,col = "linear MMD")) +
    ggtitle("50 Samples From Each Distribution") +
    labs(x="Distance Between Means",y="Percentage of Correct Rejections")
 
